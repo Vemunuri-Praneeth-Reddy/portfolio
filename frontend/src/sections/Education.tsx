@@ -1,7 +1,7 @@
-import type { Education } from '../types'
+import type { Education as EducationType } from '../types'
 import { education } from '../data'
 
-function EducationCard({ degree, institution, year, description }: Education) {
+function EducationCard({ degree, institution, year, description }: EducationType) {
   return (
     <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-200">
       <div className="flex items-start justify-between mb-3">

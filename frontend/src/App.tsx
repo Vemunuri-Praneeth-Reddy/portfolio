@@ -1,4 +1,4 @@
-import Navbar from "./components/Nabvar"
+import Navbar from "./components/Navbar"
 import About from "./sections/About"
 import Education from "./sections/Education"
 import Experience from "./sections/Experience"
@@ -6,7 +6,7 @@ import Hero from "./sections/Hero"
 import Projects from "./sections/Projects"
 import Skills from "./sections/Skills"
 import Contact from "./sections/Contact"
-import Footer from "./sections/Footer"
+import Footer from "./components/Footer"
 function App() {
   return (
     <main className="font-sans text-gray-800 bg-white">

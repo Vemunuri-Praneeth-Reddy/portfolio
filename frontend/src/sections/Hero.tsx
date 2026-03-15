@@ -35,7 +35,7 @@ function Hero(){
         <div className="flex-shrink-0">
           <div className="w-72 h-72 rounded-full bg-accent/10 border-4 border-accent overflow-hidden flex items-center justify-center">
             <img
-                  src="/src/assets/profile.jpg"
+                  src="/profile.jpg"
                   alt="Vemunuri Praneeth Reddy"
                   className="w-full h-full object-cover"
             />

@@ -29,6 +29,7 @@ func ContactHandler(w http.ResponseWriter, r *http.Request) {
 
 	err = sendEmail(req)
 	if err != nil {
+		fmt.Println("Email error:", err)
 		http.Error(w, "Failed to send message", http.StatusInternalServerError)
 		return
 	}

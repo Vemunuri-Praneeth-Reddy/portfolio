@@ -7,23 +7,25 @@ import (
 	"os"
 
 	"github.com/Vemunuri-Praneeth-Reddy/portfolio-backend/models"
-	"gopkg.in/gomail.v2"
+	"github.com/resend/resend-go/v2"
 )
 
 func ContactHandler(w http.ResponseWriter, r *http.Request) {
+
 	if r.Body == nil {
-		http.Error(w, "Empty Request body", http.StatusBadRequest)
+		http.Error(w, "Request body is required", http.StatusBadRequest)
 		return
 	}
+
 	var req models.ContactRequest
 	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
-		http.Error(w, "Invalid Request body", http.StatusBadRequest)
+		http.Error(w, "Invalid request body", http.StatusBadRequest)
 		return
 	}
 
 	if req.Name == "" || req.Email == "" {
-		http.Error(w, "Name and Email required", http.StatusBadRequest)
+		http.Error(w, "Name and email are required", http.StatusBadRequest)
 		return
 	}
 
@@ -37,27 +39,28 @@ func ContactHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(map[string]string{
-		"message": "Message Recieved successfully",
+		"message": "Message received successfully",
 	})
 }
 
 func sendEmail(req models.ContactRequest) error {
-	smtpEmail := os.Getenv("SMTP_EMAIL")
-	smtpPassword := os.Getenv("SMTP_PASSWORD")
+	apiKey := os.Getenv("RESEND_API_KEY")
 	receiverEmail := os.Getenv("RECEIVER_EMAIL")
 
-	m := gomail.NewMessage()
-	m.SetHeader("From", smtpEmail)
-	m.SetHeader("To", receiverEmail)
-	m.SetHeader("Subject", fmt.Sprintf("Portfolio Contact from %s", req.Name))
-	m.SetBody("text/html", fmt.Sprintf(`
-		<h3>New message from your portfolio</h3>
-		<p><strong>Name:</strong> %s</p>
-		<p><strong>Email:</strong> %s</p>
-		<p><strong>Message:</strong> %s</p>
-	`, req.Name, req.Email, req.Message))
+	client := resend.NewClient(apiKey)
 
-	d := gomail.NewDialer("smtp.gmail.com", 587, smtpEmail, smtpPassword)
+	params := &resend.SendEmailRequest{
+		From:    "Portfolio Contact <onboarding@resend.dev>",
+		To:      []string{receiverEmail},
+		Subject: fmt.Sprintf("Portfolio Contact from %s", req.Name),
+		Html: fmt.Sprintf(`
+			<h3>New message from your portfolio</h3>
+			<p><strong>Name:</strong> %s</p>
+			<p><strong>Email:</strong> %s</p>
+			<p><strong>Message:</strong> %s</p>
+		`, req.Name, req.Email, req.Message),
+	}
 
-	return d.DialAndSend(m)
+	_, err := client.Emails.Send(params)
+	return err
 }
